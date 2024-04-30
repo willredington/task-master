@@ -1,5 +1,4 @@
-import { Layout } from "~/domain/common/layout";
-import { Protected } from "~/domain/common/protected";
+import { Protected } from "~/domain/common";
 
 export default function Home() {
   return (
