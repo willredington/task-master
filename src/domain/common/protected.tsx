@@ -1,7 +1,10 @@
+import { CopilotKit } from "@copilotkit/react-core";
+import { CopilotSidebar } from "@copilotkit/react-ui";
+import "@copilotkit/react-ui/styles.css";
+import { LoaderCircle } from "lucide-react";
 import { signIn, useSession } from "next-auth/react";
 import { type PropsWithChildren } from "react";
 import { Layout } from "./layout";
-import { LoaderCircle } from "lucide-react";
 
 export const Protected = ({ children }: PropsWithChildren) => {
   const { status } = useSession();
@@ -21,6 +24,12 @@ export const Protected = ({ children }: PropsWithChildren) => {
   }
 
   if (status === "authenticated") {
-    return <Layout>{children}</Layout>;
+    return (
+      <CopilotKit url="/api/copilotkit/openai">
+        <CopilotSidebar>
+          <Layout>{children}</Layout>
+        </CopilotSidebar>
+      </CopilotKit>
+    );
   }
 };

@@ -25,6 +25,7 @@ export const env = createEnv({
     COGNITO_CLIENT_ID: z.string(),
     COGNITO_CLIENT_SECRET: z.string(),
     COGNITO_ISSUER: z.string(),
+    OPENAI_API_KEY: z.string(),
   },
 
   /**
@@ -48,6 +49,7 @@ export const env = createEnv({
     COGNITO_CLIENT_ID: process.env.COGNITO_CLIENT_ID,
     COGNITO_CLIENT_SECRET: process.env.COGNITO_CLIENT_SECRET,
     COGNITO_ISSUER: process.env.COGNITO_ISSUER,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
