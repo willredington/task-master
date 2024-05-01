@@ -6,6 +6,7 @@ import startOfWeek from "date-fns/startOfWeek";
 import { useCallback, useMemo } from "react";
 import {
   Calendar as RCalendar,
+  type CalendarProps as RCalendarProps,
   dateFnsLocalizer,
   type Event as CalendarEvent,
   type SlotInfo,
@@ -13,6 +14,7 @@ import {
 import { useDateStore } from "./state";
 import { type Task } from "./types";
 import { tasksToCalendarEvents } from "./util";
+import { DateTime } from "luxon";
 
 const locales = {
   "en-US": enUS,
@@ -37,7 +39,7 @@ export const Calendar = ({
   onTaskSelect?: (props: { task: Task }) => void;
   onEmptySpaceSelect?: (props: { start: Date; end: Date }) => void;
 }) => {
-  const { timeFrameView, setTimeFrameView } = useDateStore();
+  const { setDateTimeRange } = useDateStore();
 
   const calendarEvents = useMemo(() => tasksToCalendarEvents(tasks), [tasks]);
 
@@ -52,6 +54,23 @@ export const Calendar = ({
     },
     [onTaskSelect],
   );
+
+  const handleRangeSet: RCalendarProps["onRangeChange"] = (dates) => {
+    console.log("here", dates);
+    // assert its a list of dates with actual date objects
+    if (Array.isArray(dates) && dates.length) {
+      const startDate = dates[0];
+      const endDate = dates[dates.length - 1];
+
+      if (startDate && endDate) {
+        setDateTimeRange({
+          startDateTime: DateTime.fromJSDate(startDate),
+          endDateTime: DateTime.fromJSDate(endDate),
+        });
+        console.log("changed");
+      }
+    }
+  };
 
   const handleSlot = useCallback(
     (slotInfo: SlotInfo) => {
@@ -72,11 +91,12 @@ export const Calendar = ({
       events={calendarEvents}
       startAccessor="start"
       endAccessor="end"
-      view={timeFrameView}
-      views={["week"]}
-      onView={setTimeFrameView}
+      defaultView="week"
+      views={["week", "month"]}
+      onRangeChange={handleRangeSet}
       onSelectSlot={handleSlot}
       onSelectEvent={handleCalendarEvent}
+      onView={console.log}
       style={{ height: 700 }}
       selectable
     />

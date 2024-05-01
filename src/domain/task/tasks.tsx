@@ -2,30 +2,28 @@ import {
   useCopilotAction,
   useMakeCopilotReadable,
 } from "@copilotkit/react-core";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { api } from "~/utils/api";
+import { AddTaskModal } from "./add-task-modal";
 import { Calendar } from "./calendar";
-import { useDateStore } from "./state";
 import { DeleteTaskModal } from "./delete-task-modal";
+import { useDateStore } from "./state";
 import { type Task } from "./types";
-import { Button } from "~/components/ui/button";
-import { Plus } from "lucide-react";
 
 export const Tasks = () => {
   const [selectedTaskId, setSelectedTaskId] = useState("");
+  const [selectedDateRange, setSelectedDateRange] = useState<{
+    start: Date;
+    end: Date;
+  } | null>(null);
 
-  const { dateTimeRange } = useDateStore();
-
-  const [startDate, endDate] = useMemo(
-    () => [dateTimeRange[0].toJSDate(), dateTimeRange[1].toJSDate()] as const,
-    [dateTimeRange],
-  );
+  const { startDateTime, endDateTime } = useDateStore();
 
   const utils = api.useUtils();
 
   const { isLoading, data: tasks = [] } = api.task.getTasks.useQuery({
-    start: startDate,
-    end: endDate,
+    start: startDateTime.toJSDate(),
+    end: endDateTime.toJSDate(),
   });
 
   const createTaskMutation = api.task.createTask.useMutation({
@@ -38,6 +36,13 @@ export const Tasks = () => {
     setSelectedTaskId(task.id);
   }, []);
 
+  const handleEmptySpace = useCallback(
+    ({ start, end }: { start: Date; end: Date }) => {
+      setSelectedDateRange({ start, end });
+    },
+    [],
+  );
+
   useMakeCopilotReadable(
     `These are the tasks for the week: ${JSON.stringify(tasks)}`,
   );
@@ -45,7 +50,7 @@ export const Tasks = () => {
   useCopilotAction({
     name: "addTask",
     description:
-      "Help the user add actions to their tasks for the week, try your best to make sure any added tasks do not overlap with existing tasks and warn the user if they do",
+      "help the user add actions to their tasks for the week, try your best to make sure any added tasks do not overlap with existing tasks and warn the user if they do",
     parameters: [
       {
         name: "name",
@@ -76,16 +81,58 @@ export const Tasks = () => {
     },
   });
 
+  useCopilotAction({
+    name: "updateTask",
+    description: "help the user update actions in their list of tasks",
+    parameters: [
+      {
+        name: "id",
+        description: "ID of the task",
+        type: "string",
+        required: true,
+      },
+      {
+        name: "name",
+        description: "name of the task to add",
+        type: "string",
+        required: false,
+      },
+      {
+        name: "start",
+        description: "starting date and time as an ISO string of the task",
+        type: "string",
+        required: false,
+      },
+      {
+        name: "end",
+        description: "ending date and time as an ISO string of the task",
+        type: "string",
+        required: false,
+      },
+    ],
+    handler: async (params) => {
+      console.log(params);
+      // TODO: trigger toast
+    },
+  });
+
   return (
     <>
       <div className="flex flex-col items-stretch space-y-4">
         {isLoading && <p>Loading tasks...</p>}
-        <Calendar tasks={tasks} onTaskSelect={handleTaskSelect} />
-        <Button className="flex items-center justify-between gap-2 self-end">
-          Add
-          <Plus className="h-4 w-4" />
-        </Button>
+        <Calendar
+          tasks={tasks}
+          onTaskSelect={handleTaskSelect}
+          onEmptySpaceSelect={handleEmptySpace}
+        />
       </div>
+      {selectedDateRange && (
+        <AddTaskModal
+          start={selectedDateRange.start}
+          end={selectedDateRange.end}
+          onClose={() => setSelectedDateRange(null)}
+        />
+      )}
       <DeleteTaskModal
         taskId={selectedTaskId}
         onClose={() => setSelectedTaskId("")}
