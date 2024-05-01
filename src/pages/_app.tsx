@@ -2,11 +2,12 @@ import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
 import { Inter } from "next/font/google";
-
 import { api } from "~/utils/api";
+import { cn } from "~/utils/style";
 
 import "~/styles/globals.css";
-import { cn } from "~/utils/style";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import "@copilotkit/react-textarea/styles.css";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -21,7 +22,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <SessionProvider session={session}>
       <main
         className={cn(
-          "bg-background min-h-screen font-sans antialiased",
+          "min-h-screen bg-background font-sans antialiased",
           inter.variable,
         )}
       >

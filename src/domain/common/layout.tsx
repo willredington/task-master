@@ -10,7 +10,7 @@ export function Layout({ children }: PropsWithChildren) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="flex min-h-screen flex-col">
-        <div className="container flex w-full max-w-7xl flex-grow">
+        <div className="container mt-5 flex w-full max-w-7xl flex-grow">
           <div className="flex flex-1 flex-col space-y-6">{children}</div>
         </div>
       </div>
