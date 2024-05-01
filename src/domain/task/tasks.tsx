@@ -12,6 +12,7 @@ import { type Task } from "./types";
 
 export const Tasks = () => {
   const [selectedTaskId, setSelectedTaskId] = useState("");
+
   const [selectedDateRange, setSelectedDateRange] = useState<{
     start: Date;
     end: Date;
@@ -81,40 +82,39 @@ export const Tasks = () => {
     },
   });
 
-  useCopilotAction({
-    name: "updateTask",
-    description: "help the user update actions in their list of tasks",
-    parameters: [
-      {
-        name: "id",
-        description: "ID of the task",
-        type: "string",
-        required: true,
-      },
-      {
-        name: "name",
-        description: "name of the task to add",
-        type: "string",
-        required: false,
-      },
-      {
-        name: "start",
-        description: "starting date and time as an ISO string of the task",
-        type: "string",
-        required: false,
-      },
-      {
-        name: "end",
-        description: "ending date and time as an ISO string of the task",
-        type: "string",
-        required: false,
-      },
-    ],
-    handler: async (params) => {
-      console.log(params);
-      // TODO: trigger toast
-    },
-  });
+  // useCopilotAction({
+  //   name: "updateTask",
+  //   description: "help the user update actions in their list of tasks",
+  //   parameters: [
+  //     {
+  //       name: "id",
+  //       description: "ID of the task",
+  //       type: "string",
+  //       required: true,
+  //     },
+  //     {
+  //       name: "name",
+  //       description: "name of the task to add",
+  //       type: "string",
+  //       required: false,
+  //     },
+  //     {
+  //       name: "start",
+  //       description: "starting date and time as an ISO string of the task",
+  //       type: "string",
+  //       required: false,
+  //     },
+  //     {
+  //       name: "end",
+  //       description: "ending date and time as an ISO string of the task",
+  //       type: "string",
+  //       required: false,
+  //     },
+  //   ],
+  //   handler: async (params) => {
+  //     console.log(params);
+  //   },
+  // });
 
   return (
     <>
