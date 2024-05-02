@@ -5,14 +5,11 @@ import {
 import { useCallback, useState } from "react";
 import { api } from "~/utils/api";
 import { AddTaskModal } from "./add-task-modal";
-import { Calendar } from "./calendar";
-import { DeleteTaskModal } from "./delete-task-modal";
-import { useDateStore } from "./state";
+import { Calendar, useDateStore } from "~/domain/calendar";
 import { type Task } from "./types";
+import { Spinner } from "@chakra-ui/react";
 
 export const Tasks = () => {
-  const [selectedTaskId, setSelectedTaskId] = useState("");
-
   const [selectedDateRange, setSelectedDateRange] = useState<{
     start: Date;
     end: Date;
@@ -34,7 +31,7 @@ export const Tasks = () => {
   });
 
   const handleTaskSelect = useCallback(({ task }: { task: Task }) => {
-    setSelectedTaskId(task.id);
+    console.log("selected task", task);
   }, []);
 
   const handleEmptySpace = useCallback(
@@ -47,6 +44,8 @@ export const Tasks = () => {
   useMakeCopilotReadable(
     `These are the tasks for the week: ${JSON.stringify(tasks)}`,
   );
+
+  console.log("tasks", tasks);
 
   useCopilotAction({
     name: "addTask",
@@ -118,14 +117,12 @@ export const Tasks = () => {
 
   return (
     <>
-      <div className="flex flex-col items-stretch space-y-4">
-        {isLoading && <p>Loading tasks...</p>}
-        <Calendar
-          tasks={tasks}
-          onTaskSelect={handleTaskSelect}
-          onEmptySpaceSelect={handleEmptySpace}
-        />
-      </div>
+      {isLoading && <Spinner />}
+      <Calendar
+        tasks={tasks}
+        onTaskSelect={handleTaskSelect}
+        onEmptySpaceSelect={handleEmptySpace}
+      />
       {selectedDateRange && (
         <AddTaskModal
           start={selectedDateRange.start}
@@ -133,10 +130,6 @@ export const Tasks = () => {
           onClose={() => setSelectedDateRange(null)}
         />
       )}
-      <DeleteTaskModal
-        taskId={selectedTaskId}
-        onClose={() => setSelectedTaskId("")}
-      />
     </>
   );
 };

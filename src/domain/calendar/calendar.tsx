@@ -12,7 +12,7 @@ import {
   type SlotInfo,
 } from "react-big-calendar";
 import { useDateStore } from "./state";
-import { type Task } from "./types";
+import { type Task } from "~/domain/task";
 import { tasksToCalendarEvents } from "./util";
 import { DateTime } from "luxon";
 
@@ -97,7 +97,7 @@ export const Calendar = ({
       onSelectSlot={handleSlot}
       onSelectEvent={handleCalendarEvent}
       onView={console.log}
-      style={{ height: 700 }}
+      style={{ width: "100%", height: 700 }}
       selectable
     />
   );

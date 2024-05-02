@@ -1,3 +1,4 @@
+import { VStack, Container } from "@chakra-ui/react";
 import Head from "next/head";
 import { type PropsWithChildren } from "react";
 
@@ -9,11 +10,14 @@ export function Layout({ children }: PropsWithChildren) {
         <meta name="description" content="task master app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="flex min-h-screen flex-col">
-        <div className="container mt-5 flex w-full max-w-7xl flex-grow">
-          <div className="flex flex-1 flex-col space-y-6">{children}</div>
-        </div>
-      </div>
+      <VStack h="full" align={"stretch"} spacing={4}>
+        <p>navbar goes here</p>
+        <Container maxW={"container.xl"}>
+          <VStack h="full" w="full" spacing={6} my={2}>
+            {children}
+          </VStack>
+        </Container>
+      </VStack>
     </>
   );
 }

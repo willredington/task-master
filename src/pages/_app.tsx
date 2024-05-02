@@ -1,34 +1,35 @@
+import { ChakraProvider } from "@chakra-ui/react";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
-import { Inter } from "next/font/google";
 import { api } from "~/utils/api";
-import { cn } from "~/utils/style";
+import { fonts } from "~/lib/fonts";
+import { theme } from "~/theme";
 
-import "~/styles/globals.css";
-import "react-big-calendar/lib/css/react-big-calendar.css";
+import "@copilotkit/react-ui/styles.css";
 import "@copilotkit/react-textarea/styles.css";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import "~/styles/globals.css";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
   return (
-    <SessionProvider session={session}>
-      <main
-        className={cn(
-          "min-h-screen bg-background font-sans antialiased",
-          inter.variable,
-        )}
-      >
-        <Component {...pageProps} />
-      </main>
-    </SessionProvider>
+    <>
+      <style jsx global>
+        {`
+          :root {
+            --font-rubik: ${fonts.rubik.style.fontFamily};
+          }
+        `}
+      </style>
+      <SessionProvider session={session}>
+        <ChakraProvider theme={theme}>
+          <Component {...pageProps} />
+        </ChakraProvider>
+      </SessionProvider>
+    </>
   );
 };
 

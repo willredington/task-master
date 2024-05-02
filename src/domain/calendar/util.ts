@@ -1,5 +1,5 @@
 import { type Event as CalendarEvent } from "react-big-calendar";
-import { type Task } from "./types";
+import { type Task } from "../task/types";
 
 export function tasksToCalendarEvents(tasks: Task[]): CalendarEvent[] {
   return tasks.map(
