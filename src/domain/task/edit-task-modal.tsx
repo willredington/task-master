@@ -19,20 +19,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { api } from "~/utils/api";
+import { type Task } from "./types";
+import { useCallback } from "react";
 
-const AddTaskFormData = z.object({
+const EditTaskFormData = z.object({
   name: z.string().min(1),
 });
 
-type AddTaskFormData = z.infer<typeof AddTaskFormData>;
+type EditTaskFormData = z.infer<typeof EditTaskFormData>;
 
-export const AddTaskModal = ({
-  startDate,
-  endDate,
+export const EditTaskModal = ({
+  task,
   onClose,
 }: {
-  startDate: Date;
-  endDate: Date;
+  task: Task | null;
   onClose: () => void;
 }) => {
   const utils = api.useUtils();
@@ -41,33 +41,51 @@ export const AddTaskModal = ({
     register,
     handleSubmit,
     formState: { isLoading, isValid, errors },
-  } = useForm<AddTaskFormData>({
-    resolver: zodResolver(AddTaskFormData),
-    defaultValues: {
-      name: "",
+  } = useForm<EditTaskFormData>({
+    resolver: zodResolver(EditTaskFormData),
+    values: {
+      name: task?.name ?? "",
     },
   });
 
-  const createTaskMutation = api.task.createTask.useMutation({
+  const updateTaskMutation = api.task.updateTask.useMutation({
     onSuccess: async () => {
       await utils.task.getTasks.invalidate();
       onClose();
     },
   });
 
-  const onSubmit = async (data: AddTaskFormData) => {
-    await createTaskMutation.mutateAsync({
-      start: startDate,
-      end: endDate,
-      name: data.name,
-    });
+  const deleteTaskMutation = api.task.deleteTask.useMutation({
+    onSuccess: async () => {
+      await utils.task.getTasks.invalidate();
+      onClose();
+    },
+  });
+
+  const onDelete = useCallback(async () => {
+    if (task) {
+      await deleteTaskMutation.mutateAsync({
+        id: task.id,
+      });
+    }
+  }, [task, deleteTaskMutation]);
+
+  const onSubmit = async (data: EditTaskFormData) => {
+    if (task) {
+      await updateTaskMutation.mutateAsync({
+        id: task.id,
+        name: data.name,
+      });
+    }
   };
 
   return (
-    <Modal isOpen onClose={onClose}>
+    <Modal isOpen={!!task} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>New Task</ModalHeader>
+        <ModalHeader>
+          <Text>Edit Task</Text>
+        </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -84,10 +102,13 @@ export const AddTaskModal = ({
                   <FormErrorMessage>{errors.name.message}</FormErrorMessage>
                 )}
               </FormControl>
-              <Text>{startDate.toISOString()}</Text>
               <HStack justify={"space-between"} alignSelf={"stretch"}>
-                <Button colorScheme="blue" onClick={onClose}>
-                  Close
+                <Button
+                  colorScheme="red"
+                  onClick={onDelete}
+                  isLoading={deleteTaskMutation.isPending}
+                >
+                  Delete
                 </Button>
                 <Button
                   type="submit"
@@ -95,7 +116,7 @@ export const AddTaskModal = ({
                   isLoading={isLoading}
                   isDisabled={!isValid}
                 >
-                  Create
+                  Update
                 </Button>
               </HStack>
             </VStack>

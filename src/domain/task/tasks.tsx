@@ -8,8 +8,11 @@ import { AddTaskModal } from "./add-task-modal";
 import { Calendar, useDateStore } from "~/domain/calendar";
 import { type Task } from "./types";
 import { Spinner } from "@chakra-ui/react";
+import { EditTaskModal } from "./edit-task-modal";
 
 export const Tasks = () => {
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+
   const [selectedDateRange, setSelectedDateRange] = useState<{
     start: Date;
     end: Date;
@@ -31,7 +34,7 @@ export const Tasks = () => {
   });
 
   const handleTaskSelect = useCallback(({ task }: { task: Task }) => {
-    console.log("selected task", task);
+    setSelectedTask(task);
   }, []);
 
   const handleEmptySpace = useCallback(
@@ -60,60 +63,27 @@ export const Tasks = () => {
       },
       {
         name: "start",
-        description: "starting date and time as an ISO string of the task",
+        description: `starting date and time as an ISO string of the task without the timezone`,
         type: "string",
         required: true,
       },
       {
         name: "end",
-        description: "ending date and time as an ISO string of the task",
+        description: `ending date and time as an ISO string of the task without the timezone`,
         type: "string",
         required: true,
       },
     ],
     handler: async (params) => {
-      await createTaskMutation.mutateAsync({
-        name: params.name,
-        start: new Date(params.start),
-        end: new Date(params.end),
-      });
+      console.log("addTask params", params);
+      // await createTaskMutation.mutateAsync({
+      //   name: params.name,
+      //   start: new Date(params.start),
+      //   end: new Date(params.end),
+      // });
       // TODO: trigger toast
     },
   });
-
-  // useCopilotAction({
-  //   name: "updateTask",
-  //   description: "help the user update actions in their list of tasks",
-  //   parameters: [
-  //     {
-  //       name: "id",
-  //       description: "ID of the task",
-  //       type: "string",
-  //       required: true,
-  //     },
-  //     {
-  //       name: "name",
-  //       description: "name of the task to add",
-  //       type: "string",
-  //       required: false,
-  //     },
-  //     {
-  //       name: "start",
-  //       description: "starting date and time as an ISO string of the task",
-  //       type: "string",
-  //       required: false,
-  //     },
-  //     {
-  //       name: "end",
-  //       description: "ending date and time as an ISO string of the task",
-  //       type: "string",
-  //       required: false,
-  //     },
-  //   ],
-  //   handler: async (params) => {
-  //     console.log(params);
-  //   },
-  // });
 
   return (
     <>
@@ -123,10 +93,14 @@ export const Tasks = () => {
         onTaskSelect={handleTaskSelect}
         onEmptySpaceSelect={handleEmptySpace}
       />
+      <EditTaskModal
+        task={selectedTask}
+        onClose={() => setSelectedTask(null)}
+      />
       {selectedDateRange && (
         <AddTaskModal
-          start={selectedDateRange.start}
-          end={selectedDateRange.end}
+          startDate={selectedDateRange.start}
+          endDate={selectedDateRange.end}
           onClose={() => setSelectedDateRange(null)}
         />
       )}
