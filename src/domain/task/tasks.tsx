@@ -52,6 +52,7 @@ export const Tasks = () => {
 
   useCopilotAction({
     name: "addTask",
+
     description:
       "help the user add actions to their tasks for the week, try your best to make sure any added tasks do not overlap with existing tasks and warn the user if they do",
     parameters: [
