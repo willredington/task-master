@@ -11,7 +11,6 @@ export function Layout({ children }: PropsWithChildren) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <VStack h="full" align={"stretch"} spacing={4}>
-        <p>navbar goes here</p>
         <Container maxW={"container.xl"}>
           <VStack h="full" w="full" spacing={6} my={2}>
             {children}

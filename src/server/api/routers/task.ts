@@ -33,6 +33,7 @@ export const taskRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
+      console.log(input);
       await ctx.db.task.create({
         data: {
           name: input.name,

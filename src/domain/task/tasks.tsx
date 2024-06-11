@@ -45,16 +45,14 @@ export const Tasks = () => {
   );
 
   useMakeCopilotReadable(
-    `These are the tasks for the week: ${JSON.stringify(tasks)}`,
+    `These are the tasks for this date range from ${selectedDateRange?.start.toDateString()} to ${selectedDateRange?.end.toDateString()}: ${JSON.stringify(tasks)}`,
   );
 
   console.log("tasks", tasks);
 
   useCopilotAction({
     name: "addTask",
-
-    description:
-      "help the user add actions to their tasks for the week, try your best to make sure any added tasks do not overlap with existing tasks and warn the user if they do",
+    description: `help the user add actions to their tasks for the week, try your best to make sure any added tasks do not overlap with existing tasks and warn the user if they do, today's date is ${new Date().toDateString()}`,
     parameters: [
       {
         name: "name",
@@ -77,12 +75,11 @@ export const Tasks = () => {
     ],
     handler: async (params) => {
       console.log("addTask params", params);
-      // await createTaskMutation.mutateAsync({
-      //   name: params.name,
-      //   start: new Date(params.start),
-      //   end: new Date(params.end),
-      // });
-      // TODO: trigger toast
+      await createTaskMutation.mutateAsync({
+        name: params.name,
+        start: new Date(params.start),
+        end: new Date(params.end),
+      });
     },
   });
 
